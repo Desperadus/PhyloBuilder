@@ -1,4 +1,13 @@
 # Byte-compiled / optimized / DLL files
+# Custom
+names.txt
+used_species.txt
+output.fasta
+
+
+
+
+
 __pycache__/
 *.py[cod]
 *$py.class
