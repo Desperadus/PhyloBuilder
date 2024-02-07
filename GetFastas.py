@@ -1,6 +1,9 @@
 from typing import List, Optional, Tuple
 from Bio import Entrez, SeqIO
 from tqdm import tqdm
+import argparse
+
+#TODO: Make fetching run concurrently for faster results
 
 def fetch_gene_sequences(
     species_list: List[str],
@@ -95,7 +98,7 @@ def generate_warning(species: str, fasta_sequence: str) -> str:
     """
     Generates a warning message for sequences where the species name does not match the header.
     """
-    return f"WARNING: Full/Same name for {species} not found in fasta header, check it manually!"
+    return f"WARNING: Full/Same name for {species} not found in fasta header, check it manually! Fasta header: {fasta_sequence.splitlines()[0]}"
 
 def handle_not_found(species: str, gene_name: str, unfound_species: List[str], fasta_sequences: List[str], skip_errors: bool) -> None:
     """
@@ -122,5 +125,18 @@ def finalize_report(found_species: List[str], unfound_species: List[str], warnin
             file.writelines(f"{species}\n" for species in used_species)
 
 if __name__ == "__main__":
-    species_names = ["Homo sapiens", "Mus musculus", "Canis lupus"]
-    fetch_gene_sequences(species_names, "BRCA1", "example@email.com", 900, 1300, verbose=True, skip_errors=True, skip_warnings=False)
+    parser = argparse.ArgumentParser(description='Fetch gene sequences for a list of species.')
+    parser.add_argument('-f', '--file', required=True, help='File containing species names, one per line.')
+    parser.add_argument('-g', '--gene', required=True, help='Gene name to fetch sequences for.')
+    parser.add_argument('-e', '--email', required=True, help='Email address to use with the Entrez API for tracking purposes.')
+    parser.add_argument('-min', '--min_length', type=int, default=0, help='Minimum length of the gene sequences to be fetched. Defaults to 0.')
+    parser.add_argument('-max', '--max_length', type=int, default=1000000, help='Maximum length of the gene sequences to be fetched. Defaults to 1_000_000.')
+    parser.add_argument('-v', '--verbose', action='store_true', help='If set, prints additional information.')
+    parser.add_argument('-se', '--skip_errors', action='store_true', help='If set, skips adding sequences that could not be obtained.')
+    parser.add_argument('-sw', '--skip_warnings', action='store_true', help='If set, skips adding sequences where species name does not match header.')
+    args = parser.parse_args()
+
+    with open(args.file, 'r') as f:
+        species_names = [line.strip() for line in f]
+
+    fetch_gene_sequences(species_names, args.gene, args.email, args.min_length, args.max_length, verbose=args.verbose, skip_errors=args.skip_errors, skip_warnings=args.skip_warnings)
