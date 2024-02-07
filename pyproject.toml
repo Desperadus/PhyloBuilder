@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 biopython = "^1.83"
 tqdm = "^4.66.1"
+requests = "^2.31.0"
 
 
 [build-system]

@@ -2,7 +2,8 @@
 # Custom
 names.txt
 used_species.txt
-output.fasta
+*.fasta
+*.aln
 
 
 
