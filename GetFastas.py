@@ -16,6 +16,7 @@ def fetch_gene_sequences(
     verbose: bool = False,
     skip_errors: bool = False,
     skip_warnings: bool = False,
+    output_file: Optional[str] = "output.fasta",
     **kwargs,
 ) -> None:
     """
@@ -55,7 +56,7 @@ def fetch_gene_sequences(
         else:
             handle_not_found(species, gene_name, unfound_species, fasta_sequences, skip_errors)
 
-    finalize_report(found_species, unfound_species, warnings, fasta_sequences, used_species, skip_errors, skip_warnings)
+    finalize_report(found_species, unfound_species, warnings, fasta_sequences, used_species, skip_errors, skip_warnings, output_file)
 
 def construct_search_query(species: str, gene_name: str, min_length: int, max_length: int, prompt_template: Optional[str], template_values: Optional[Tuple]) -> str:
     """
@@ -104,11 +105,12 @@ def handle_not_found(species: str, gene_name: str, unfound_species: List[str], f
     """
     Handles species for which no sequences were found.
     """
+    print(f"{species} with {gene_name} not found.")
     unfound_species.append(species)
     if not skip_errors:
         fasta_sequences.append(f">{species} {gene_name} not found.\n\n")
 
-def finalize_report(found_species: List[str], unfound_species: List[str], warnings: str, fasta_sequences: List[str], used_species: List[str], skip_errors: bool, skip_warnings: bool) -> None:
+def finalize_report(found_species: List[str], unfound_species: List[str], warnings: str, fasta_sequences: List[str], used_species: List[str], skip_errors: bool, skip_warnings: bool, output_file: str) -> None:
     """
     Finalizes the report, printing found and unfound species, and saving outputs.
     """
@@ -117,7 +119,7 @@ def finalize_report(found_species: List[str], unfound_species: List[str], warnin
     if warnings:
         print(warnings)
 
-    with open("output.fasta", "w") as file:
+    with open(output_file, "w") as file:
         file.writelines(fasta_sequences)
 
     if skip_errors or skip_warnings:
@@ -127,6 +129,7 @@ def finalize_report(found_species: List[str], unfound_species: List[str], warnin
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Fetch gene sequences for a list of species.')
     parser.add_argument('-f', '--file', required=True, help='File containing species names, one per line.')
+    parser.add_argument('-o', '--output', default="output.fasta", help='Output file to save the fetched sequences.')
     parser.add_argument('-g', '--gene', required=True, help='Gene name to fetch sequences for.')
     parser.add_argument('-e', '--email', required=True, help='Email address to use with the Entrez API for tracking purposes.')
     parser.add_argument('-min', '--min_length', type=int, default=0, help='Minimum length of the gene sequences to be fetched. Defaults to 0.')
@@ -139,4 +142,4 @@ if __name__ == "__main__":
     with open(args.file, 'r') as f:
         species_names = [line.strip() for line in f]
 
-    fetch_gene_sequences(species_names, args.gene, args.email, args.min_length, args.max_length, verbose=args.verbose, skip_errors=args.skip_errors, skip_warnings=args.skip_warnings)
+    fetch_gene_sequences(species_names, args.gene, args.email, args.min_length, args.max_length, verbose=args.verbose, skip_errors=args.skip_errors, skip_warnings=args.skip_warnings, output_file=args.output)

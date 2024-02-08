@@ -3,7 +3,7 @@ import os
 import requests
 import sys
 import time
-
+import webbrowser
 
 def submit_alignment_job(fasta_sequence, email: str, algorithm: str):
     """Submit the alignment job to EMBL-EBI and return the job ID."""
@@ -94,6 +94,7 @@ if __name__ == "__main__":
         job_id = submit_alignment_job(
             fasta_sequences, args.email, args.algorithm)
         print(f"Job submitted. Job ID: {job_id}")
+        print(f"You can check it at: http://www.ebi.ac.uk/jdispatcher/msa/{args.algorithm}/summary?jobId={job_id}")
 
         while check_job_status(job_id, args.algorithm) != "FINISHED":
             if args.verbose:
