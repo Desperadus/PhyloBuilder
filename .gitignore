@@ -3,6 +3,7 @@
 names.txt
 used_species.txt
 *.fasta
+fastas
 *.aln
 
 
