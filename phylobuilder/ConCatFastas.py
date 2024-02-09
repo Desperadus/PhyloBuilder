@@ -17,28 +17,31 @@ def replace_headers_and_concatenate(fasta_files, species_list, output_file):
         for i, record in enumerate(SeqIO.parse(fasta_file, "fasta")):
             batch.append(str(record.seq))
             if i >= len(species_names):
-                raise ValueError(f"Number of sequences in {fasta_file} is greater than the number of species in {species_list}.")
+                raise ValueError(
+                    f"Number of sequences in {fasta_file} is greater than the number of species in {species_list}."
+                )
         sequences.append(batch)
-    
+
     concatenated_seqs = []
     for i in range(len(species_names)):
         concatenated_seq = "".join([seq[i] for seq in sequences])
         concatenated_seqs.append(concatenated_seq)
-            
+
     with open(output_file, "w") as of:
         result = ""
-        with open (output_file, "w") as of:
+        with open(output_file, "w") as of:
             for i, species in enumerate(species_names):
                 result += f">{species}\n{concatenated_seqs[i]}\n\n"
             of.write(result)
-    
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Replace FASTA headers with species names and concatenate files."
     )
-    parser.add_argument("-f", "--fasta_files", nargs="+", help="Input FASTA files.", required=True)
+    parser.add_argument(
+        "-f", "--fasta_files", nargs="+", help="Input FASTA files.", required=True
+    )
     parser.add_argument(
         "-s",
         "--species_list",
@@ -52,3 +55,7 @@ if __name__ == "__main__":
     replace_headers_and_concatenate(
         args.fasta_files, args.species_list, args.output_file
     )
+
+
+if __name__ == "__main__":
+    main()

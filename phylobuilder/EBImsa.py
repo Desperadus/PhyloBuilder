@@ -5,6 +5,7 @@ import sys
 import time
 import webbrowser
 
+
 def submit_alignment_job(fasta_sequence, email: str, algorithm: str):
     """Submit the alignment job to EMBL-EBI and return the job ID."""
     url = f"http://www.ebi.ac.uk/Tools/services/rest/{algorithm}/run/"
@@ -83,7 +84,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main():
     args = parse_arguments()
 
     fasta_sequences = load_fasta_file(args.file)
@@ -94,7 +95,9 @@ if __name__ == "__main__":
         job_id = submit_alignment_job(
             fasta_sequences, args.email, args.algorithm)
         print(f"Job submitted. Job ID: {job_id}")
-        print(f"You can check it at: http://www.ebi.ac.uk/jdispatcher/msa/{args.algorithm}/summary?jobId={job_id}")
+        print(
+            f"You can check it at: http://www.ebi.ac.uk/jdispatcher/msa/{args.algorithm}/summary?jobId={job_id}"
+        )
 
         while check_job_status(job_id, args.algorithm) != "FINISHED":
             if args.verbose:
@@ -107,3 +110,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"An error occurred: {e}", file=sys.stderr)
         sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

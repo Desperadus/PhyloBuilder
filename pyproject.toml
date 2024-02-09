@@ -6,7 +6,7 @@ authors = ["Tomas Jelinek <tomgolf.jelinek@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 biopython = "^1.83"
 tqdm = "^4.66.1"
 requests = "^2.31.0"
@@ -15,3 +15,8 @@ requests = "^2.31.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+GetFastas = "phylobuilder.GetFastas:main"
+EBImsa = "phylobuilder.EBImsa:main"
+ConCatFastas = "phylobuilder.ConCatFastas:main"
