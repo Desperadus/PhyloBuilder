@@ -3,7 +3,7 @@ Python package to help automate process of building a phylogenetic tree by downl
 
 ## Installation
 
-Before using the tools, ensure you have Python 3.9+ installed on your system. Then, install the toolkit using pip:
+Before using the tools, ensure you have Python 3.9+ and git installed on your system. Then, install the toolkit using pip:
 
 ```bash
 pip install git+https://github.com/Desperadus/PhyloBuilder.git
